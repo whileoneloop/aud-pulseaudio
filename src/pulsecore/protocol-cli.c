@@ -33,7 +33,7 @@
 #include "protocol-cli.h"
 
 /* Don't allow more than this many concurrent connections */
-#define MAX_CONNECTIONS 25
+#define MAX_CONNECTIONS 100
 
 struct pa_cli_protocol {
     PA_REFCNT_DECLARE;
@@ -74,6 +74,8 @@ void pa_cli_protocol_connect(pa_cli_protocol *p, pa_iochannel *io, pa_module *m)
     pa_cli_set_eof_callback(c, cli_eof_cb, p);
 
     pa_idxset_put(p->connections, c, NULL);
+
+    pa_log_info("pa_cli_protocol_connect, new connection, (total: %u)", pa_idxset_size(p->connections));
 }
 
 void pa_cli_protocol_disconnect(pa_cli_protocol *p, pa_module *m) {
@@ -86,6 +88,8 @@ void pa_cli_protocol_disconnect(pa_cli_protocol *p, pa_module *m) {
     while ((c = pa_idxset_iterate(p->connections, &state, NULL)))
         if (pa_cli_get_module(c) == m)
             cli_unlink(p, c);
+    
+    pa_log_info("pa_cli_protocol_disconnect, (total: %u)", pa_idxset_size(p->connections));
 }
 
 static pa_cli_protocol* cli_protocol_new(pa_core *c) {

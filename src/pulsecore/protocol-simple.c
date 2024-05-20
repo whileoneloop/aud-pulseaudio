@@ -43,7 +43,7 @@
 #include "protocol-simple.h"
 
 /* Don't allow more than this many concurrent connections */
-#define MAX_CONNECTIONS 10
+#define MAX_CONNECTIONS 100
 
 typedef struct connection {
     pa_msgobject parent;

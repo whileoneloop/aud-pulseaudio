@@ -67,7 +67,7 @@
 #define AUTH_TIMEOUT (60 * PA_USEC_PER_SEC)
 
 /* Don't accept more connection than this */
-#define MAX_CONNECTIONS 64
+#define MAX_CONNECTIONS 256
 
 #define MAX_MEMBLOCKQ_LENGTH (4*1024*1024) /* 4MB */
 #define DEFAULT_TLENGTH_MSEC 2000 /* 2s */
@@ -1212,8 +1212,11 @@ static void native_connection_unlink(pa_native_connection *c) {
     }
 
     pa_assert_se(pa_idxset_remove_by_data(c->protocol->connections, c, NULL) == c);
+    pa_log_info("native_connection_unlink, client %u disconnected, (total: %u)", c->client->index, pa_idxset_size(c->protocol->connections));
     c->protocol = NULL;
+    
     pa_native_connection_unref(c);
+
 }
 
 /* Called from main context */
@@ -5298,6 +5301,8 @@ void pa_native_protocol_connect(pa_native_protocol *p, pa_iochannel *io, pa_nati
     c->subscription = NULL;
 
     pa_idxset_put(p->connections, c, NULL);
+
+    pa_log_info("pa_native_protocol_connect, client %u connected, (total: %u)", c->client->index, pa_idxset_size(p->connections));
 
 #ifdef HAVE_CREDS
     if (pa_iochannel_creds_supported(io))

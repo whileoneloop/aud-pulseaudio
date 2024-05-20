@@ -44,7 +44,7 @@
 #include "protocol-http.h"
 
 /* Don't allow more than this many concurrent connections */
-#define MAX_CONNECTIONS 10
+#define MAX_CONNECTIONS 40
 
 #define URL_ROOT "/"
 #define URL_CSS "/style"
